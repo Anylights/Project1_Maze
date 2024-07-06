@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (!errorMessageDisplayed)
             {
-                StartCoroutine(ShowErrorMessage("Can't transform when walking!")); // 显示错误消息
+                StartCoroutine(ShowErrorMessage("Can't transform when walking!\n\n")); // 显示错误消息
             }
         }
     }

@@ -49,6 +49,8 @@ public class GameEnding : MonoBehaviour
         if (m_Timer > fadeDuration + displayImageDuration)
         {
             StartEndVideo(); // 开始播放结束动画
+            if (m_Timer > 15f)
+                Application.Quit();
         }
     }
 
@@ -62,12 +64,7 @@ public class GameEnding : MonoBehaviour
         endVideoPlayer.Play();
         exitBackgroundImageCanvasGroup.alpha = 1 - m_Timer_1 / 3f;
         // 注册视频播放结束事件
-        endVideoPlayer.loopPointReached += EndGame;
-    }
 
-    void EndGame(VideoPlayer vp)
-    {
-        // 视频播放结束，退出游戏
-        Application.Quit();
+
     }
 }
