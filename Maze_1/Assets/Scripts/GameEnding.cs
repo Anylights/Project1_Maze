@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class GameEnding : MonoBehaviour
 {
@@ -8,9 +9,13 @@ public class GameEnding : MonoBehaviour
     public float displayImageDuration = 1f;
     public GameObject player;
     public CanvasGroup exitBackgroundImageCanvasGroup;
+    public VideoPlayer endVideoPlayer; // 新增VideoPlayer引用
+    public GameObject videoCanvas; // 用于显示VideoPlayer的UI画布
+    public AudioSource Back_audioSource;
 
     bool m_IsPlayerAtExit;
     float m_Timer;
+    float m_Timer_1;
 
     void OnTriggerEnter(Collider other)
     {
@@ -38,11 +43,31 @@ public class GameEnding : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
+        Back_audioSource.volume = 1 - m_Timer / fadeDuration;
         exitBackgroundImageCanvasGroup.alpha = m_Timer / fadeDuration;
 
         if (m_Timer > fadeDuration + displayImageDuration)
         {
-            Application.Quit();
+            StartEndVideo(); // 开始播放结束动画
         }
+    }
+
+    void StartEndVideo()
+    {
+        m_Timer_1 += Time.deltaTime;
+        // 显示视频画布
+        videoCanvas.SetActive(true);
+
+        // 播放视频
+        endVideoPlayer.Play();
+        exitBackgroundImageCanvasGroup.alpha = 1 - m_Timer_1 / 3f;
+        // 注册视频播放结束事件
+        endVideoPlayer.loopPointReached += EndGame;
+    }
+
+    void EndGame(VideoPlayer vp)
+    {
+        // 视频播放结束，退出游戏
+        Application.Quit();
     }
 }

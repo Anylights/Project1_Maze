@@ -1,21 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // 添加对UI命名空间的引用
 
 public class PlayerMovement : MonoBehaviour
 {
     public float turnSpeed = 20f;
+    public ParticleSystem teleportEffect; // 添加对ParticleSystem的引用
+    public Text errorMessage; // 添加对Text的引用
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
     Vector3 m_Movement;
     Quaternion m_Rotation = Quaternion.identity;
     float fixedYPosition = 0f; // 初始化为0
+    bool errorMessageDisplayed = false; // 用于跟踪错误信息是否已显示
 
     void Start()
     {
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
+        errorMessage.gameObject.SetActive(false); // 初始化时隐藏错误消息
     }
 
     void FixedUpdate()
@@ -49,24 +54,63 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            StartCoroutine(ChangeYPosition());
+            if (IsPlayerStationary())
+            {
+                StartCoroutine(ChangeYPosition());
+                errorMessageDisplayed = false; // 重置错误信息显示状态
+            }
+            else if (!errorMessageDisplayed)
+            {
+                StartCoroutine(ShowErrorMessage("Can't transform when walking!")); // 显示错误消息
+            }
         }
+    }
+
+    bool IsPlayerStationary()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        return Mathf.Approximately(horizontal, 0f) && Mathf.Approximately(vertical, 0f);
     }
 
     IEnumerator ChangeYPosition()
     {
         yield return new WaitForSeconds(0f);
 
+        // 计算传送后的新位置
+        Vector3 newPosition;
         if (Mathf.Approximately(fixedYPosition, 0f))
         {
+            newPosition = new Vector3(m_Rigidbody.position.x, 56.5f, m_Rigidbody.position.z);
             fixedYPosition = 56.5f;
         }
         else if (Mathf.Approximately(fixedYPosition, 56.5f))
         {
+            newPosition = new Vector3(m_Rigidbody.position.x, 0f, m_Rigidbody.position.z);
             fixedYPosition = 0f;
+        }
+        else
+        {
+            newPosition = m_Rigidbody.position; // 默认情况下保持当前位置
+        }
+
+        // 在新位置播放特效
+        if (teleportEffect != null)
+        {
+            Instantiate(teleportEffect, newPosition, Quaternion.identity);
+            teleportEffect.Play();
         }
 
         // 更新刚体的位置
-        m_Rigidbody.position = new Vector3(m_Rigidbody.position.x, fixedYPosition, m_Rigidbody.position.z);
+        m_Rigidbody.position = newPosition;
+    }
+
+    IEnumerator ShowErrorMessage(string message)
+    {
+        errorMessage.text = message;
+        errorMessage.gameObject.SetActive(true);
+        errorMessageDisplayed = true; // 设置错误信息显示状态
+        yield return new WaitForSeconds(2f); // 显示2秒钟
+        errorMessage.gameObject.SetActive(false);
     }
 }
