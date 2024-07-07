@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem teleportEffect; // 添加对ParticleSystem的引用
     public Text errorMessage; // 添加对Text的引用
     public AudioClip teleportSound; // 添加对AudioClip的引用
+    public AudioClip footstepSound1; // 第一个脚步声
+    public AudioClip footstepSound2; // 第二个脚步声
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
@@ -17,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     float fixedYPosition = 0f; // 初始化为0
     bool errorMessageDisplayed = false; // 用于跟踪错误信息是否已显示
     AudioSource m_AudioSource; // 添加AudioSource变量
+    bool isPlayingFootstep = false; // 跟踪是否正在播放脚步声
 
     void Start()
     {
@@ -38,6 +41,16 @@ public class PlayerMovement : MonoBehaviour
         bool hasVerticalInput = !Mathf.Approximately(vertical, 0f);
         bool isWalking = hasHorizontalInput || hasVerticalInput;
         m_Animator.SetBool("IsWalking", isWalking);
+
+        // 播放或停止脚步声
+        if (isWalking && !isPlayingFootstep)
+        {
+            PlayFootstepSound();
+        }
+        else if (!isWalking && isPlayingFootstep)
+        {
+            StopFootstepSound();
+        }
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);
@@ -84,10 +97,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 newPosition;
         if (Mathf.Approximately(fixedYPosition, 0f))
         {
-            newPosition = new Vector3(m_Rigidbody.position.x, 56.5f, m_Rigidbody.position.z);
-            fixedYPosition = 56.5f;
+            newPosition = new Vector3(m_Rigidbody.position.x, 56.52612f, m_Rigidbody.position.z);
+            fixedYPosition = 56.52612f;
         }
-        else if (Mathf.Approximately(fixedYPosition, 56.5f))
+        else if (Mathf.Approximately(fixedYPosition, 56.52612f))
         {
             newPosition = new Vector3(m_Rigidbody.position.x, 0f, m_Rigidbody.position.z);
             fixedYPosition = 0f;
@@ -110,6 +123,9 @@ public class PlayerMovement : MonoBehaviour
             m_AudioSource.PlayOneShot(teleportSound);
         }
 
+        // 停止脚步声
+        StopFootstepSound();
+
         // 更新刚体的位置
         m_Rigidbody.position = newPosition;
     }
@@ -121,5 +137,33 @@ public class PlayerMovement : MonoBehaviour
         errorMessageDisplayed = true; // 设置错误信息显示状态
         yield return new WaitForSeconds(2f); // 显示2秒钟
         errorMessage.gameObject.SetActive(false);
+    }
+
+    void PlayFootstepSound()
+    {
+        if (Mathf.Approximately(fixedYPosition, 0f))
+        {
+            m_AudioSource.clip = footstepSound1;
+        }
+        else if (Mathf.Approximately(fixedYPosition, 56.52612f))
+        {
+            m_AudioSource.clip = footstepSound2;
+        }
+
+        if (m_AudioSource.clip != null)
+        {
+            m_AudioSource.loop = true;
+            m_AudioSource.Play();
+            isPlayingFootstep = true;
+        }
+    }
+
+    void StopFootstepSound()
+    {
+        if (isPlayingFootstep)
+        {
+            m_AudioSource.Stop();
+            isPlayingFootstep = false;
+        }
     }
 }

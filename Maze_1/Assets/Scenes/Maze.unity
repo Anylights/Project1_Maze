@@ -937,6 +937,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 57f340928eec3ed448509de7d9d9a005, type: 3}
     - target: {fileID: 4765609929426056653, guid: 433e445d4e2df434ba8ca9d5791a59fc, type: 3}
+      propertyPath: footstepSound1
+      value: 
+      objectReference: {fileID: 8300000, guid: 6abcdb0bb38839747a83434f29671f87, type: 3}
+    - target: {fileID: 4765609929426056653, guid: 433e445d4e2df434ba8ca9d5791a59fc, type: 3}
+      propertyPath: footstepSound2
+      value: 
+      objectReference: {fileID: 8300000, guid: 7eab2401a85a84f48810a89f0c90ed1c, type: 3}
+    - target: {fileID: 4765609929426056653, guid: 433e445d4e2df434ba8ca9d5791a59fc, type: 3}
       propertyPath: teleportEffect
       value: 
       objectReference: {fileID: 198126008008065056, guid: 79f561344a9b0d54bb31290904c765bb, type: 3}
