@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public float turnSpeed = 20f;
     public ParticleSystem teleportEffect; // 添加对ParticleSystem的引用
     public Text errorMessage; // 添加对Text的引用
+    public AudioClip teleportSound; // 添加对AudioClip的引用
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
@@ -15,12 +16,14 @@ public class PlayerMovement : MonoBehaviour
     Quaternion m_Rotation = Quaternion.identity;
     float fixedYPosition = 0f; // 初始化为0
     bool errorMessageDisplayed = false; // 用于跟踪错误信息是否已显示
+    AudioSource m_AudioSource; // 添加AudioSource变量
 
     void Start()
     {
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
         errorMessage.gameObject.SetActive(false); // 初始化时隐藏错误消息
+        m_AudioSource = GetComponent<AudioSource>(); // 获取AudioSource组件
     }
 
     void FixedUpdate()
@@ -61,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (!errorMessageDisplayed)
             {
-                StartCoroutine(ShowErrorMessage("Can't transform when walking!\n\n")); // 显示错误消息
+                StartCoroutine(ShowErrorMessage("移动时不能传送\n\n")); // 显示错误消息
             }
         }
     }
@@ -99,6 +102,12 @@ public class PlayerMovement : MonoBehaviour
         {
             Instantiate(teleportEffect, newPosition, Quaternion.identity);
             teleportEffect.Play();
+        }
+
+        // 播放传送音效
+        if (teleportSound != null && m_AudioSource != null)
+        {
+            m_AudioSource.PlayOneShot(teleportSound);
         }
 
         // 更新刚体的位置
