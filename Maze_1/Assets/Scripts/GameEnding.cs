@@ -32,7 +32,11 @@ public class GameEnding : MonoBehaviour
             EndLevel();
         }
 
-
+        // 检测按下Esc键
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     void EndLevel()
