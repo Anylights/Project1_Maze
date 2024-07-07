@@ -36,15 +36,15 @@ public class PlayerMovement : MonoBehaviour
         bool isWalking = hasHorizontalInput || hasVerticalInput;
         m_Animator.SetBool("IsWalking", isWalking);
 
-        // 播放或停止脚步声
-        if (isWalking && !isPlayingFootstep)
-        {
-            PlayFootstepSound();
-        }
-        else if (!isWalking && isPlayingFootstep)
-        {
-            StopFootstepSound();
-        }
+        // // 播放或停止脚步声
+        // if (isWalking && !isPlayingFootstep)
+        // {
+        //     PlayFootstepSound();
+        // }
+        // else if (!isWalking && isPlayingFootstep)
+        // {
+        //     StopFootstepSound();
+        // }
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);
@@ -124,31 +124,31 @@ public class PlayerMovement : MonoBehaviour
         errorMessage.gameObject.SetActive(false);
     }
 
-    void PlayFootstepSound()
-    {
-        if (Mathf.Approximately(fixedYPosition, 0f))
-        {
-            m_AudioSource.clip = footstepSound1;
-        }
-        else if (Mathf.Approximately(fixedYPosition, 56.52612f))
-        {
-            m_AudioSource.clip = footstepSound2;
-        }
+    // void PlayFootstepSound()
+    // {
+    //     if (Mathf.Approximately(fixedYPosition, 0f))
+    //     {
+    //         m_AudioSource.clip = footstepSound1;
+    //     }
+    //     else if (Mathf.Approximately(fixedYPosition, 56.52612f))
+    //     {
+    //         m_AudioSource.clip = footstepSound2;
+    //     }
 
-        if (m_AudioSource.clip != null)
-        {
-            m_AudioSource.loop = true;
-            m_AudioSource.Play();
-            isPlayingFootstep = true;
-        }
-    }
+    //     if (m_AudioSource.clip != null)
+    //     {
+    //         m_AudioSource.loop = true;
+    //         m_AudioSource.Play();
+    //         isPlayingFootstep = true;
+    //     }
+    // }
 
-    void StopFootstepSound()
-    {
-        if (isPlayingFootstep)
-        {
-            m_AudioSource.Stop();
-            isPlayingFootstep = false;
-        }
-    }
+    // void StopFootstepSound()
+    // {
+    //     if (isPlayingFootstep)
+    //     {
+    //         m_AudioSource.Stop();
+    //         isPlayingFootstep = false;
+    //     }
+    // }
 }
